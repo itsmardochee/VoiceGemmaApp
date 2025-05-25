@@ -113,7 +113,8 @@ const App = () => {
     const [llmStatus, setLlmStatus] = useState('');
     const [selectedModelPath, setSelectedModelPath] = useState('');
     const [showDownloadModal, setShowDownloadModal] = useState(false);
-    const [downloadUrl, setDownloadUrl] = useState('https://huggingface.co/lmstudio-community/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q3_K_L.gguf');
+    // const [downloadUrl, setDownloadUrl] = useState('https://huggingface.co/lmstudio-community/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q3_K_L.gguf');
+    const [downloadUrl, setDownloadUrl] = useState('https://huggingface.co/tensorblock/gemma-3-4b-it-GGUF/resolve/main/gemma-3-4b-it-Q8_0.gguf?download=true');
     const [downloadProgress, setDownloadProgress] = useState(0);
     const [isDownloading, setIsDownloading] = useState(false);
     const [isCopying, setIsCopying] = useState(false);
@@ -205,12 +206,20 @@ const App = () => {
 
         Tts.addEventListener('tts-finish', event => {
             console.log('🔊 TTS: Fin de la synthèse', event);
-            setIsSpeaking(false);
+            // Délai plus long pour s'assurer que le service audio est complètement libéré
+            setTimeout(() => {
+                setIsSpeaking(false);
+                console.log('🔊 TTS: Service audio libéré');
+            }, 800);
         });
 
         Tts.addEventListener('tts-cancel', event => {
             console.log('🔊 TTS: Synthèse annulée', event);
-            setIsSpeaking(false);
+            // Délai plus long pour s'assurer que le service audio est complètement libéré
+            setTimeout(() => {
+                setIsSpeaking(false);
+                console.log('🔊 TTS: Service audio libéré après annulation');
+            }, 800);
         });
 
         // Vérifier s'il y a un modèle sauvegardé
@@ -295,13 +304,53 @@ const App = () => {
 
     const startListening = async () => {
         console.log('▶️ User Action: Bouton "Commencer l\'écoute" pressé');
+        
+        // Vérifier si TTS est encore en cours
+        if (isSpeaking) {
+            console.warn('⚠️ Voice: TTS en cours, arrêt avant de commencer l\'écoute');
+            try {
+                await Tts.stop();
+                // Attendre un délai plus long pour que TTS se termine complètement
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                setIsSpeaking(false);
+            } catch (error) {
+                console.error('❌ Voice: Erreur lors de l\'arrêt du TTS:', error);
+            }
+        }
+        
+        // Délai de sécurité supplémentaire même si TTS n'était pas en cours
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
         try {
+            // Vérifier si Voice est déjà en écoute et nettoyer si nécessaire
+            try {
+                await Voice.stop();
+                await Voice.destroy();
+                console.log('🧹 Voice: Services précédents nettoyés');
+            } catch (cleanupError) {
+                console.log('🧹 Voice: Pas de services précédents à nettoyer');
+            }
+            
+            // Attendre encore un peu avant de redémarrer
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
             console.log(`🎤 Voice: Démarrage de la reconnaissance vocale (${t.voiceLanguage})`);
             await Voice.start(t.voiceLanguage);
             console.log('✅ Voice: Service de reconnaissance démarré avec succès');
         } catch (error) {
             console.error('❌ Voice: Erreur lors du démarrage:', error);
-            Alert.alert(t.errorTitle, t.voiceStartError);
+            
+            // Tentative de récupération avec délai plus long
+            try {
+                console.log('🔄 Voice: Tentative de récupération avec délai...');
+                await Voice.destroy();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                await Voice.start(t.voiceLanguage);
+                console.log('✅ Voice: Service récupéré avec succès');
+            } catch (retryError) {
+                console.error('❌ Voice: Échec de la récupération:', retryError);
+                Alert.alert(t.errorTitle, t.voiceStartError);
+            }
         }
     };
 
@@ -750,9 +799,9 @@ const App = () => {
                 <TouchableOpacity
                     style={[styles.micButton, isListening && styles.micButtonActive]}
                     onPress={isListening ? stopListening : startListening}
-                    disabled={isProcessing || !isLlmReady || isCopying}>
+                    disabled={isProcessing || !isLlmReady || isCopying || isSpeaking}>
                     <Text style={styles.micButtonText}>
-                        {isListening ? t.stop : t.speak}
+                        {isListening ? t.stop : (isSpeaking ? '⏳ Attendre...' : t.speak)}
                     </Text>
                 </TouchableOpacity>
 
