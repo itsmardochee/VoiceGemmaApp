@@ -1,97 +1,195 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# 🎤 VoiceGemmaApp
 
-# Getting Started
+A React Native application that integrates local **Gemma 3** AI with voice recognition and text-to-speech. The app enables natural conversations with AI directly on your mobile device, without internet connection for inference.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## ✨ Features
 
-## Step 1: Start Metro
+- 🗣️ **Multilingual voice recognition** (French/English)
+- 🤖 **Local Gemma 3 AI** for intelligent responses
+- 🔊 **Text-to-speech** for AI responses
+- 📱 **Intuitive interface** with model management
+- 🌐 **Multilingual support** (French/English)
+- 📁 **Model management** (local selection or download)
+- 🚀 **Optimized performance** for Samsung S24 Ultra and other powerful devices
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## 🚀 Installation
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### Prerequisites
 
-```sh
-# Using npm
+Make sure you have completed the React Native development environment setup. Check the [official guide](https://reactnative.dev/docs/set-up-your-environment).
+
+### Special Dependencies
+
+This application uses several specialized native libraries:
+
+```bash
+# Voice recognition
+npm install @react-native-voice/voice
+
+# Text-to-speech
+npm install react-native-tts
+
+# Local AI with Llama/Gemma
+npm install llama.rn
+
+# File management
+npm install react-native-fs2
+
+# Document selection
+npm install @react-native-documents/picker
+
+# Permissions
+npm install react-native-permissions
+
+# Local storage
+npm install @react-native-async-storage/async-storage
+```
+
+### Pod installation (iOS)
+
+```bash
+cd ios
+bundle install
+bundle exec pod install
+cd ..
+```
+
+## 🏃‍♂️ Running the Application
+
+### Step 1: Start Metro
+
+```bash
 npm start
-
-# OR using Yarn
+# or
 yarn start
 ```
 
-## Step 2: Build and run your app
+### Step 2: Launch the Application
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
+#### Android
+```bash
 npm run android
-
-# OR using Yarn
+# or
 yarn android
 ```
 
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+#### iOS
+```bash
 npm run ios
-
-# OR using Yarn
+# or
 yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## 🤖 AI Model Configuration
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+### Supported Models
 
-## Step 3: Modify your app
+The application supports Gemma models in GGUF format:
+- **Gemma 3 4B** (recommended) - Good performance/quality balance
+- **Gemma 3 2B** - Lighter for less powerful devices
+- Other GGUF compatible models
 
-Now that you have successfully run the app, let's make changes!
+### Getting a Model
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+#### Option 1: Direct download in the app
+1. Open the application
+2. Tap "📥 Download Model"
+3. Use the default URL or paste your own URL
+4. Wait for download and automatic initialization
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+#### Option 2: Local file selection
+1. Download a GGUF model to your device
+2. In the app, tap "📁 Select Model"
+3. Choose your .gguf file
+4. The app will automatically copy and initialize the model
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+### Recommended Model URLs
 
-## Congratulations! :tada:
+```
+# Gemma 3 4B (recommended)
+https://huggingface.co/tensorblock/gemma-3-4b-it-GGUF/resolve/main/gemma-3-4b-it-Q8_0.gguf
 
-You've successfully run and modified your React Native App. :partying_face:
+# Lighter alternative model
+https://huggingface.co/lmstudio-community/DeepSeek-R1-Distill-Qwen-1.5B-GGUF/resolve/main/DeepSeek-R1-Distill-Qwen-1.5B-Q3_K_L.gguf
+```
 
-### Now what?
+## 🎯 Usage
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+1. **First launch**: Select or download an AI model
+2. **Wait for initialization**: "Gemma is ready!" appears
+3. **Speak**: Press the microphone button 🎤
+4. **Listen to response**: AI responds automatically via text-to-speech
+5. **Replay**: Use the 🔊 button to replay the last response
 
-# Troubleshooting
+### Language Switching
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+Tap the flag (🇫🇷/🇺🇸) to switch between French and English.
 
-# Learn More
+## 🛠️ Technical Architecture
 
-To learn more about React Native, take a look at the following resources:
+### Main Services
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- **LlamaService**: Local AI management (llama.rn)
+- **Voice Recognition**: @react-native-voice/voice
+- **Text-to-Speech**: react-native-tts
+- **File Management**: react-native-fs2
+
+### Optimizations
+
+- **GPU Acceleration**: Maximum use of mobile GPU
+- **Reduced Context**: Optimized for short responses
+- **Memory Management**: Automatic resource cleanup
+- **Smart Caching**: Reuse of already downloaded models
+
+## 📱 Compatibility
+
+### Recommended Devices
+- **Samsung Galaxy S24 Ultra** (tested on it)
+- Android devices with 8GB+ RAM
+- iPhone 13 Pro or newer
+
+### Minimum Requirements
+- Android 7.0+ or iOS 12+
+- 4GB RAM minimum (8GB+ recommended)
+- 4GB free storage for models
+- Functional microphone and speakers
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+**AI doesn't respond:**
+- Check that a model is selected and initialized
+- Restart the application if necessary
+
+**Voice recognition doesn't work:**
+- Grant microphone permissions
+- Check that TTS is not running
+
+**Model too slow:**
+- Use a smaller model (2B instead of 4B)
+- Close other applications to free up RAM
+
+**Download error:**
+- Check your internet connection
+- Make sure you have enough storage space
+
+## 📝 Logs and Debugging
+
+The application generates detailed logs in the console:
+- 🎤 Voice: Voice recognition
+- 🤖 LLM: AI processing
+- 🔊 TTS: Text-to-speech
+- 📁 Model: Model management
+
+## 📄 License
+
+This project is the intellectual property of the author. All rights reserved.
+
+
+## 🔗 Useful Resources
+
+- [React Native](https://reactnative.dev)
+- [Llama.rn Documentation](https://github.com/mybigday/llama.rn)
+- [Gemma Models](https://huggingface.co/tensorblock/gemma-3-4b-it-GGUF)
+- [Voice Recognition](https://github.com/react-native-voice/voice)
